@@ -1,0 +1,815 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/activity/query",
+    "github.com/project-flogo/contrib/activity/actreturn",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/activity/update",
+    "github.com/tibco/flogo-mcp/src/app/MCP/trigger/mcpserver",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/connector/connection"
+  ],
+  "name": "order-manager",
+  "description": "Add description",
+  "version": "1.0.0",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#mcpserver",
+      "name": "flogo-mcp-mcpsever",
+      "description": "Flogo MCP server for Agentic AI",
+      "settings": {
+        "serverName": "=$property[\"MCP.serverName\"]",
+        "serverVersion": "1.0.0",
+        "serverType": "HTTP",
+        "serverPort": "=$property[\"MCP.port\"]",
+        "serverEndpointPath": "=$property[\"MCP.URI\"]",
+        "enableTLS": false,
+        "serverCertificate": "",
+        "serverPrivateKey": "",
+        "authType": "None",
+        "authToken": ""
+      },
+      "id": "MCPServer",
+      "handlers": [
+        {
+          "description": "",
+          "settings": {
+            "handlerType": "Tool",
+            "resourceUri": "",
+            "handlerName": "=$property[\"TOOLS.GetOrderStatus.name\"]",
+            "handlerDescription": "=$property[\"TOOLS.GetOrderStatus.description\"]"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:getOrderStatus"
+            },
+            "input": {
+              "arguments": {
+                "mapping": {
+                  "order_id": "=$.arguments.order_id"
+                }
+              }
+            },
+            "output": {
+              "response": {
+                "mapping": {
+                  "data": "=$.response.data",
+                  "error": "=$.response.error"
+                }
+              }
+            }
+          },
+          "schemas": {
+            "reply": {
+              "response": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n }\r\n}"
+              }
+            },
+            "output": {
+              "arguments": "schema://mcpInputArg"
+            }
+          },
+          "name": "getOrderStatus"
+        },
+        {
+          "description": "",
+          "settings": {
+            "handlerType": "Tool",
+            "resourceUri": "",
+            "handlerName": "=$property[\"TOOLS.GetDeliveryStatus.name\"]",
+            "handlerDescription": "=$property[\"TOOLS.GetDeliveryStatus.description\"]"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:getDeliveryStatus"
+            },
+            "input": {
+              "arguments": {
+                "mapping": {
+                  "order_id": "=$.arguments.order_id"
+                }
+              }
+            },
+            "output": {
+              "response": {
+                "mapping": {
+                  "data": "=$.response.data",
+                  "error": "=$.response.error"
+                }
+              }
+            }
+          },
+          "schemas": {
+            "reply": {
+              "response": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n }\r\n}"
+              }
+            },
+            "output": {
+              "arguments": "schema://mcpInputArg"
+            }
+          },
+          "name": "getDeliveryStatus"
+        },
+        {
+          "description": "",
+          "settings": {
+            "handlerType": "Tool",
+            "resourceUri": "",
+            "handlerName": "=$property[\"TOOLS.CancelOrder.name\"]",
+            "handlerDescription": "=$property[\"TOOLS.CancelOrder.description\"]"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:cancelOrder"
+            },
+            "input": {
+              "arguments": {
+                "mapping": {
+                  "order_id": "=$.arguments.order_id"
+                }
+              }
+            },
+            "output": {
+              "response": {
+                "mapping": {
+                  "data": "=$.response.data",
+                  "error": "=$.response.error"
+                }
+              }
+            }
+          },
+          "schemas": {
+            "reply": {
+              "response": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n }\r\n}"
+              }
+            },
+            "output": {
+              "arguments": "schema://mcpInputArg"
+            }
+          },
+          "name": "cancelOrder"
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:getOrderStatus",
+      "data": {
+        "name": "getOrderStatus",
+        "description": "",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "PostgreSQLQuery",
+            "type": "label",
+            "label": "StartActivity to PostgreSQLQuery"
+          },
+          {
+            "id": 2,
+            "from": "PostgreSQLQuery",
+            "to": "ReturnOK",
+            "type": "label",
+            "label": "PostgreSQLQuery to Return"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "PostgreSQLQuery",
+            "name": "PostgreSQLQuery",
+            "description": "This activity executes query on a PostgreSQL database",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#query",
+              "input": {
+                "Connection": "conn://a044d354-d1ce-4f24-b613-40092e9c720b",
+                "QueryName": "",
+                "Schema": "om",
+                "Query": "select json_agg(oo.*) as order_detail from om.om_order oo where order_id = ?order_id;",
+                "manualmode": false,
+                "Fields": [
+                  {
+                    "FieldName": "order_id",
+                    "Type": "LONGVARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false
+                  },
+                  {
+                    "FieldName": "order_detail",
+                    "Type": "VARCHAR",
+                    "Selected": true,
+                    "Parameter": false,
+                    "isEditable": false
+                  }
+                ],
+                "RuntimeQuery": "",
+                "State": "34f2649d-bd0a-4693-8169-378550440331select json_agg(oo.*) as order_detail from om.om_order oo where order_id = ?order_id;",
+                "input": {
+                  "mapping": {
+                    "parameters": {
+                      "order_id": "=$flow.arguments.order_id"
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\"}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\"}}}}}"
+                  }
+                },
+                "output": {
+                  "Output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"order_detail\":{\"type\":\"string\"}}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"order_detail\":{\"type\":\"string\"}}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "ReturnOK",
+            "name": "ReturnOK",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "response": {
+                    "mapping": {
+                      "data": "=$activity[PostgreSQLQuery].Output.records[0].order_detail"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjExMCwieSI6MTAyfSwiUG9zdGdyZVNRTFF1ZXJ5Ijp7IngiOjMxNywieSI6OTN9LCJSZXR1cm5PSyI6eyJ4Ijo2MTQsInkiOjk0fX0=",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "ReturnKO",
+              "name": "ReturnKO",
+              "description": "Simple Return Activity",
+              "activity": {
+                "ref": "#actreturn",
+                "settings": {
+                  "mappings": {
+                    "response": {
+                      "mapping": {
+                        "error": "=$error.message"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [],
+          "fe_metadata": "eyJSZXR1cm5LTyI6eyJ4Ijo0MTgsInkiOjEwMn19"
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"order_id\":{\"type\":\"string\"}}"
+              }
+            },
+            {
+              "name": "httpHeaders",
+              "type": "params"
+            }
+          ],
+          "output": [
+            {
+              "name": "response",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"MCPServer\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"required\":[\"order_id\"],\"properties\":{\"order_id\":{\"type\":\"string\"}}},\"httpHeaders\":{\"type\":\"params\"}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"response\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}}},\"required\":[\"response\"]}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:getDeliveryStatus",
+      "data": {
+        "name": "getDeliveryStatus",
+        "description": "",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "PostgreSQLQuery",
+            "type": "label",
+            "label": "StartActivity to PostgreSQLQuery"
+          },
+          {
+            "id": 2,
+            "from": "PostgreSQLQuery",
+            "to": "ReturnOK",
+            "type": "label",
+            "label": "PostgreSQLQuery to Return"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "PostgreSQLQuery",
+            "name": "PostgreSQLQuery",
+            "description": "This activity executes query on a PostgreSQL database",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#query",
+              "input": {
+                "Connection": "conn://a044d354-d1ce-4f24-b613-40092e9c720b",
+                "QueryName": "",
+                "Schema": "om",
+                "Query": "select json_agg(od.*) as delivery_detail from om.om_delivery od where od.order_id = ?order_id;",
+                "manualmode": false,
+                "Fields": [
+                  {
+                    "FieldName": "order_id",
+                    "Type": "LONGVARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false
+                  },
+                  {
+                    "FieldName": "delivery_detail",
+                    "Type": "VARCHAR",
+                    "Selected": true,
+                    "Parameter": false,
+                    "isEditable": false
+                  }
+                ],
+                "RuntimeQuery": "",
+                "State": "92fa278e-8595-4dcd-ac20-e6aa6adf74c2select json_agg(od.*) as delivery_detail from om.om_delivery od where od.order_id = ?order_id;",
+                "input": {
+                  "mapping": {
+                    "parameters": {
+                      "order_id": "=$flow.arguments.order_id"
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\"}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\"}}}}}"
+                  }
+                },
+                "output": {
+                  "Output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"delivery_detail\":{\"type\":\"string\"}}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"delivery_detail\":{\"type\":\"string\"}}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "ReturnOK",
+            "name": "ReturnOK",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "response": {
+                    "mapping": {
+                      "data": "=$activity[PostgreSQLQuery].Output.records[0].delivery_detail"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiUG9zdGdyZVNRTFF1ZXJ5Ijp7IngiOjI4MywieSI6OTJ9LCJSZXR1cm5PSyI6eyJ4Ijo1NTMsInkiOjk1fX0=",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "ReturnKO",
+              "name": "ReturnKO",
+              "description": "Simple Return Activity",
+              "activity": {
+                "ref": "#actreturn",
+                "settings": {
+                  "mappings": {
+                    "response": {
+                      "mapping": {
+                        "error": "=$error.message"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [],
+          "fe_metadata": "eyJSZXR1cm5LTyI6eyJ4Ijo0MjksInkiOjEwMH19"
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"order_id\":{\"type\":\"string\"}}"
+              }
+            },
+            {
+              "name": "httpHeaders",
+              "type": "params"
+            }
+          ],
+          "output": [
+            {
+              "name": "response",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"MCPServer\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"required\":[\"order_id\"],\"properties\":{\"order_id\":{\"type\":\"string\"}}},\"httpHeaders\":{\"type\":\"params\"}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"response\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}}},\"required\":[\"response\"]}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:cancelOrder",
+      "data": {
+        "name": "cancelOrder",
+        "description": "",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "PostgreSQLUpdate",
+            "type": "label",
+            "label": "StartActivity to PostgreSQLUpdate"
+          },
+          {
+            "id": 2,
+            "from": "PostgreSQLUpdate",
+            "to": "ReturnOK",
+            "type": "label",
+            "label": "PostgreSQLUpdate to Return"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "PostgreSQLUpdate",
+            "name": "PostgreSQLUpdate",
+            "description": "This activity executes update on a PostgreSQL database",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#update",
+              "input": {
+                "Connection": "conn://a044d354-d1ce-4f24-b613-40092e9c720b",
+                "UpdateName": "",
+                "Schema": "om",
+                "Query": "UPDATE om.om_order\nSET status='CANCELED'\nWHERE \nstatus in ('PROCESSING','PENDING')\nand order_id= ?order_id;",
+                "manualmode": false,
+                "RuntimeQuery": "",
+                "Fields": [
+                  {
+                    "FieldName": "order_id",
+                    "Type": "LONGVARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false
+                  }
+                ],
+                "State": "2078f639-08d8-4b1d-9d0d-f8db99e22091UPDATE om.om_order\nSET status='CANCELED'\nWHERE \nstatus in ('PROCESSING','PENDING')\nand order_id= ?order_id;",
+                "input": {
+                  "mapping": {
+                    "parameters": {
+                      "order_id": "=$flow.arguments.order_id"
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\"}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\"}}}}}"
+                  }
+                },
+                "output": {
+                  "Output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "ReturnOK",
+            "name": "ReturnOK",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "response": {
+                    "mapping": {
+                      "data": "Tool has been executed success, Please verify the updatation using getOrderStatus tools"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwNCwieSI6MTAyfSwiUG9zdGdyZVNRTFVwZGF0ZSI6eyJ4IjoyNzksInkiOjkzfSwiUmV0dXJuT0siOnsieCI6NTMzLCJ5Ijo5M319",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "ReturnKO",
+              "name": "ReturnKO",
+              "description": "Simple Return Activity",
+              "activity": {
+                "ref": "#actreturn",
+                "settings": {
+                  "mappings": {
+                    "response": {
+                      "mapping": {
+                        "error": "=$error.message"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [],
+          "fe_metadata": "eyJSZXR1cm5LTyI6eyJ4Ijo0MTcsInkiOjEwMn19"
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"order_id\":{\"type\":\"string\"}}"
+              }
+            },
+            {
+              "name": "httpHeaders",
+              "type": "params"
+            }
+          ],
+          "output": [
+            {
+              "name": "response",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"MCPServer\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"required\":[\"order_id\"],\"properties\":{\"order_id\":{\"type\":\"string\"}}},\"httpHeaders\":{\"type\":\"params\"}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"response\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}}},\"required\":[\"response\"]}"
+          }
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "PostgreSQL.om.Host",
+      "type": "string",
+      "value": "localhost"
+    },
+    {
+      "name": "PostgreSQL.om.Port",
+      "type": "float64",
+      "value": 5431
+    },
+    {
+      "name": "PostgreSQL.om.Database_Name",
+      "type": "string",
+      "value": "postgres"
+    },
+    {
+      "name": "PostgreSQL.om.User",
+      "type": "string",
+      "value": "ecombot"
+    },
+    {
+      "name": "PostgreSQL.om.Password",
+      "type": "string",
+      "value": "SECRET:wBS2BVCQopPX1vrjCLe7NphI6zZbZFAZvuI="
+    },
+    {
+      "name": "PostgreSQL.om.Maximum_Open_Connections",
+      "type": "float64",
+      "value": 0
+    },
+    {
+      "name": "PostgreSQL.om.Maximum_Idle_Connections",
+      "type": "float64",
+      "value": 2
+    },
+    {
+      "name": "PostgreSQL.om.Maximum_Connection_Lifetime",
+      "type": "string",
+      "value": 0
+    },
+    {
+      "name": "PostgreSQL.om.Maximum_Connection_Retry_Attempts",
+      "type": "float64",
+      "value": 3
+    },
+    {
+      "name": "PostgreSQL.om.Connection_Retry_Delay",
+      "type": "float64",
+      "value": 5
+    },
+    {
+      "name": "PostgreSQL.om.Connection_Timeout",
+      "type": "float64",
+      "value": 20
+    },
+    {
+      "name": "MCP.serverName",
+      "type": "string",
+      "value": "om-ecombot-mcp"
+    },
+    {
+      "name": "MCP.port",
+      "type": "string",
+      "value": "8098"
+    },
+    {
+      "name": "MCP.URI",
+      "type": "string",
+      "value": "/ecombot/mcp"
+    },
+    {
+      "name": "TOOLS.GetOrderStatus.name",
+      "type": "string",
+      "value": "getOrderStatus"
+    },
+    {
+      "name": "TOOLS.GetOrderStatus.description",
+      "type": "string",
+      "value": "This tool fetch the information about orders which includes status and their offers."
+    },
+    {
+      "name": "TOOLS.GetDeliveryStatus.name",
+      "type": "string",
+      "value": "getDeliveryStatus"
+    },
+    {
+      "name": "TOOLS.GetDeliveryStatus.description",
+      "type": "string",
+      "value": "This tool fetch the information about delivery status."
+    },
+    {
+      "name": "TOOLS.CancelOrder.description",
+      "type": "string",
+      "value": "This tool cancel the order if it is in processing and pending state"
+    },
+    {
+      "name": "TOOLS.CancelOrder.name",
+      "type": "string",
+      "value": "cancelOrder"
+    }
+  ],
+  "schemas": {
+    "mcpInputArg": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"required\": [\n        \"order_id\"\n    ],\n    \"properties\": {\n        \"order_id\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"required\": [\n        \"order_id\"\n    ],\n    \"properties\": {\n        \"order_id\": {\n            \"type\": \"string\"\n        }\n    }\n}"
+    }
+  },
+  "connections": {
+    "a044d354-d1ce-4f24-b613-40092e9c720b": {
+      "id": "a044d354-d1ce-4f24-b613-40092e9c720b",
+      "name": "om",
+      "ref": "#connection",
+      "isGlobal": false,
+      "settings": {
+        "databaseType": "PostgreSQL",
+        "name": "om",
+        "description": "",
+        "host": "=$property[\"PostgreSQL.om.Host\"]",
+        "port": "=$property[\"PostgreSQL.om.Port\"]",
+        "databaseName": "=$property[\"PostgreSQL.om.Database_Name\"]",
+        "user": "=$property[\"PostgreSQL.om.User\"]",
+        "password": "=$property[\"PostgreSQL.om.Password\"]",
+        "maxopenconnection": "=$property[\"PostgreSQL.om.Maximum_Open_Connections\"]",
+        "maxidleconnection": "=$property[\"PostgreSQL.om.Maximum_Idle_Connections\"]",
+        "connmaxlifetime": "=$property[\"PostgreSQL.om.Maximum_Connection_Lifetime\"]",
+        "maxconnectattempts": "=$property[\"PostgreSQL.om.Maximum_Connection_Retry_Attempts\"]",
+        "connectionretrydelay": "=$property[\"PostgreSQL.om.Connection_Retry_Delay\"]",
+        "connectiontimeout": "=$property[\"PostgreSQL.om.Connection_Timeout\"]",
+        "onprem": false,
+        "tlsconfig": false,
+        "tlsparam": "VerifyCA",
+        "cacert": "",
+        "clientcert": "",
+        "clientkey": ""
+      }
+    }
+  },
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby9mbG9nby1tY3Avc3JjL2FwcC9NQ1AiLCJpZCI6Ik1DUCIsInZlcnNpb24iOiIxLjAuMCIsInRhZyI6IjEuMC4wLWIxMSIsIm5hbWUiOiJNb2RlbCBDb250ZXh0IFByb3RvY29sIChNQ1ApIiwiczNsb2NhdGlvbiI6IlRpYmNvL01DUCIsImlzVXNlckV4dGVuc2lvbiI6ZmFsc2V9LHsicmVmIjoiZ2l0aHViLmNvbS90aWJjby93aS1wb3N0Z3Jlcy9zcmMvYXBwL1Bvc3RncmVTUUwiLCJpZCI6IlBvc3RncmVTUUwiLCJ2ZXJzaW9uIjoiMi43LjEiLCJ0YWciOiIyLjcuMS1iMDEiLCJuYW1lIjoiUG9zdGdyZVNRTCIsInMzbG9jYXRpb24iOiJUaWJjby9Qb3N0Z3JlU1FMIiwiaXNVc2VyRXh0ZW5zaW9uIjpmYWxzZX0seyJyZWYiOiJnaXRodWIuY29tL3RpYmNvL2Zsb2dvLWdlbmVyYWwvc3JjL2FwcC9HZW5lcmFsIiwiaWQiOiJHZW5lcmFsIiwidmVyc2lvbiI6IjEuNi4xMSIsInRhZyI6IjEuNi4xMS1iMDIiLCJuYW1lIjoiR2VuZXJhbCIsInMzbG9jYXRpb24iOiJUaWJjby9HZW5lcmFsIiwiaXNVc2VyRXh0ZW5zaW9uIjpmYWxzZX1d",
+  "metadata": {
+    "endpoints": [
+      {
+        "protocol": "http",
+        "port": "8098",
+        "title": "MCPServer",
+        "type": "public"
+      }
+    ],
+    "flogoVersion": "2.26.0"
+  }
+}
