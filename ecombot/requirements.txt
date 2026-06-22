@@ -1,0 +1,9 @@
+google-adk
+google-genai
+litellm
+chromadb
+langchain-community
+langchain-text-splitters
+langsmith
+python-dotenv
+redis
